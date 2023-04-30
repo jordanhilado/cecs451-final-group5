@@ -18,7 +18,7 @@ You may choose to run this project in two ways:
 
 ### A. Google Colab
 
-1. Visit our Google Colab instance
+1. Visit our [Google Colab](https://colab.research.google.com/drive/1iS8J3uMz5qKEv_1I9t0i8s_BWmMXKxma#scrollTo=0hhUu3hCS0kk) instance
 2. Make a copy by clicking `File` > `Save a copy`
 3. Create two folders in your Colab directory: `BFS/` and `DFS/`
 4. Run the cells in order
