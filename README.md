@@ -18,10 +18,12 @@ You may choose to run this project one of two ways:
 
 ### A. Google Colab
 
-1. Visit our [Google Colab](https://colab.research.google.com/drive/1iS8J3uMz5qKEv_1I9t0i8s_BWmMXKxma#scrollTo=0hhUu3hCS0kk) instance
-2. Make a copy by clicking `File` > `Save a copy`
-3. Create two folders in your Colab directory: `BFS/` and `DFS/`
-4. Run the cells in order
+1. Visit Google Colab's [home page](https://colab.research.google.com/)
+2. Head to `File` > `Open notebook` and select the `GitHub` tab
+3. Paste the GitHub URL: `https://github.com/jordanhilado/cecs451-final-group5/blob/main/general.ipynb` and open in Colab
+4. Make a copy by clicking `File` > `Save a copy`
+5. Create two folders in your Colab directory: `BFS/` and `DFS/`
+6. Run the cells in order
 
 ### B. Local Install
 
