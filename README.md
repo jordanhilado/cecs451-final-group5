@@ -13,7 +13,7 @@
 
 You may choose to run this project one of two ways:
 
-- A. In the cloud via Google Colab
+- A. In the cloud via Google Colab _(Recommended)_
 - B. Locally via local installation
 
 ### A. Google Colab
@@ -25,10 +25,7 @@ You may choose to run this project one of two ways:
 
 ### B. Local Install
 
-1. Make sure that `Python3` and `pip` are installed
-
-- [Python download](https://www.python.org/downloads/)
-
+1. Ensure that `Python3` and `pip` are installed ([Python download](https://www.python.org/downloads/))
 2. Clone the repository and open project in an IDE
 3. Run the following command to install the required packages: `pip3 install virtualenv mazelib Cython numpy matplotlib imageio`
 4. Create a virtual environment: `python3.<version> -m venv env` (replace `<version>` with your local Python3 version)
