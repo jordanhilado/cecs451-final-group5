@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
+# import backtracking from mazelib package
+from mazelib import Maze
+from mazelib.generate.BacktrackingGenerator import BacktrackingGenerator
 
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+import math
+import time
+import sys
+import os
+import imageio.v2 as imageio
 # In[58]:
 
 
@@ -39,18 +50,7 @@ def createMP4(name, imgDirPath):
 # In[59]:
 
 
-# import backtracking from mazelib package
-from mazelib import Maze
-from mazelib.generate.BacktrackingGenerator import BacktrackingGenerator
 
-import matplotlib.pyplot as plt
-import numpy as np
-import random
-import math
-import time
-import sys
-import os
-import imageio.v2 as imageio
 
 
 
