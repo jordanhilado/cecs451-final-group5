@@ -1,30 +1,22 @@
 #!/usr/bin/env python
 # coding: utf-8
-# import backtracking from mazelib package
-from mazelib import Maze
-from mazelib.generate.BacktrackingGenerator import BacktrackingGenerator
 
-import matplotlib.pyplot as plt
-import numpy as np
-import random
-import math
-import time
-import sys
-import os
-import imageio.v2 as imageio
-# In[58]:
+# In[1]:
 
 
-def displayMaze(maze, displayState):
+def displayMaze(maze, displayState, steps):
     # create a new figure
     plt.figure(figsize=(10, 5))
 
     # display the maze
     plt.imshow(maze, cmap=plt.cm.viridis, interpolation='nearest')
     plt.xticks([]), plt.yticks([])
+    # label the graph with the number of steps taken
+    if steps > 0:
+        plt.title("Steps: " + str(steps))
+
     if displayState:
         plt.show()
-
 
 def createMP4(name, imgDirPath):
     # find the number of images in the folder
@@ -47,60 +39,88 @@ def createMP4(name, imgDirPath):
     os.system("ffmpeg -i " + name + ".mp4 -filter:v \"setpts=0.333*PTS\" " + name + "SpedUp.mp4 -y")
 
 
-# In[59]:
+# In[3]:
 
 
 
 
+# In[4]:
 
 
-# get the height and width of the maze from the user
-while True:
-    try:
-        height = (int(input("Enter the height of the maze: ")) + 1) // 2
-        width = (int(input("Enter the width of the maze: "))  + 1) // 2
-        break
-    except ValueError:
-        print("Please enter a valid integer.")
+# import backtracking from mazelib package
+from mazelib import Maze
+from mazelib.generate.BacktrackingGenerator import BacktrackingGenerator
 
-# print the height and width of the maze 
-print("Generating a maze with a height of", height, "and a width of", width)
-# create a maze object
-newMaze = Maze()
-maze_generator = BacktrackingGenerator(width, height)
-newMaze = maze_generator.generate()
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+import math
+import time
+import sys
+import os
+import imageio.v2 as imageio
 
-# print the maze
-print(newMaze)
+global bfsTime
+global dfsTime
+global bfsSteps
+global dfsSteps
+bfsTime = []
+dfsTime = []
+bfsSteps = []
+dfsSteps = []
 
-newHeight = newMaze.shape[0]
-newWidth = newMaze.shape[1]
-print("The height of the maze is", newHeight, "and the width of the maze is", newWidth)
+inputHeight = 0
+inputWidth = 0
 
-# ensure that the maze is solvable by creating an entrance and exit in a random location on the top and bottom of the maze which must be connected to a 0 in the maze
-# create a list of all the 0s in the first and last row of the maze
-topRow = []
-bottomRow = []
-for i in range(newWidth):
-    if newMaze[1][i] == 0:
-        topRow.append(i)
-    if newMaze[newHeight - 2][i] == 0:
-        bottomRow.append(i)
+def generateMaze():
+  # get the height and width of the maze from the user
+  while True:
+      try:
+          # inputHeight = int(input("Enter the height of the maze: "))
+          # inputWidth = int(input("Enter the width of the maze: "))
+          height = (inputHeight + 1) // 2
+          width = (inputWidth + 1) // 2
+          break
+      except ValueError:
+          print("Please enter a valid integer.")
 
-# randomly select a 0 from the top and bottom row
-top = random.choice(topRow)
-bottom = random.choice(bottomRow)
+  # print the height and width of the maze 
+  print("Generating a maze with a height of", height, "and a width of", width)
+  # create a maze object
+  newMaze = Maze()
+  maze_generator = BacktrackingGenerator(width, height)
+  newMaze = maze_generator.generate()
 
-# create an entrance and exit in the maze
-newMaze[0][top] = 0
-newMaze[newHeight - 1][bottom] = 0
+  # print the maze
+  print(newMaze)
 
-displayMaze(newMaze, True)
+  newHeight = newMaze.shape[0]
+  newWidth = newMaze.shape[1]
+  print("The height of the maze is", newHeight, "and the width of the maze is", newWidth)
+
+  # ensure that the maze is solvable by creating an entrance and exit in a random location on the top and bottom of the maze which must be connected to a 0 in the maze
+  # create a list of all the 0s in the first and last row of the maze
+  topRow = []
+  bottomRow = []
+  for i in range(newWidth):
+      if newMaze[1][i] == 0:
+          topRow.append(i)
+      if newMaze[newHeight - 2][i] == 0:
+          bottomRow.append(i)
+
+  # randomly select a 0 from the top1 and bottom row
+  top = random.choice(topRow)
+  bottom = random.choice(bottomRow)
+
+  # create an entrance and exit in the maze
+  newMaze[0][top] = 0
+  newMaze[newHeight - 1][bottom] = 0
+
+  displayMaze(newMaze, True, 0)
+  return newMaze
 
 
-
-
-# In[60]:
+# In[5]:
 
 
 def findNeighbors(node, maze):
@@ -143,11 +163,16 @@ def findNeighbors(node, maze):
     return neighbors
 
 
-# In[61]:
+# In[6]:
 
 
 # animate the solving of the maze using BFS by taking a screenshot of each step and saving it to a folder and at the end creating a video of the screenshots to show the solving of the maze
-def BFS(maze):
+def BFS(maze, bfsTime, bfsSteps):
+    stepCount = 0
+
+    # used to measure the time it takes to run BFS
+    start_time = time.time()
+
     # measure the height and width of the maze
     height = maze.shape[0]
     width = maze.shape[1]
@@ -170,8 +195,13 @@ def BFS(maze):
     # set the parent of the start node to None
     parent[start] = None
 
+    stepCount = 0
+
     # while the queue is not empty
     while queue:
+        # increment the step count
+        stepCount += 1
+
         # remove the first node from the queue
         node = queue.pop(0)
 
@@ -205,7 +235,7 @@ def BFS(maze):
         for q in queue:
             mazeCopy[q[0]][q[1]] = 3 
 
-        displayMaze(mazeCopy, False)
+        displayMaze(mazeCopy, False, stepCount)
         plt.savefig("BFS/" + str(len(visited)) + ".png")
         plt.close()
 
@@ -217,6 +247,7 @@ def BFS(maze):
 
     # Check if the end node has a parent
     while end in parent:
+        # stepCount += 1
         # If the end node has a parent, get the parent
         end = parent[end]
         # Add the parent to the path list
@@ -228,11 +259,18 @@ def BFS(maze):
     print(path)
     # This code creates a copy of the maze and sets the path to be colored. It then displays the image and saves it in the BFS folder with a name corresponding to the number of nodes visited.
 
+    # measure the time it takes to run BFS
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    stepCount = len(visited)
+    bfsTime.append(elapsed_time)
+    bfsSteps.append(stepCount)
+    print(f"Elapsed time for Breadth-First Search: {elapsed_time} \| Steps: {stepCount}")
+
     # Create a copy of the maze
     mazeCopy = maze.copy()
 
     currentNumFiles = len(os.listdir("BFS"))
-
 
     # For each node in the path
     for node in path:
@@ -241,24 +279,25 @@ def BFS(maze):
             # Set the node to be colored
             mazeCopy[node[0]][node[1]] = 10 
             # Display the maze in the background and add the screenshot to the BFS folder with a name corresponding to the number of nodes visited plus the initial number of files in the BFS folder
-            displayMaze(mazeCopy, False)
+            displayMaze(mazeCopy, False, stepCount)
             plt.savefig("BFS/" + str(currentNumFiles + len(path) - path.index(node)) + ".png")
             plt.close()
-        
-    
-
     
     # Call the createMP4 function to create a video of the screenshots with the parameters of the name of the file and the folder the screenshots are in
     createMP4("BFS", "BFS")
 
-BFS(newMaze)
+# BFS(newMaze, bfsTime, bfsSteps)
 
 
-# In[62]:
+# In[7]:
 
 
 # animate the solving of the maze using DFS by taking a screenshot of each step and saving it to a folder and at the end creating a video of the screenshots to show the solving of the maze
-def DFS(maze):
+def DFS(maze, dfsTime, dfsSteps):
+    # used to measure the time it takes to run DFS
+    start_time = time.time()
+    stepCount = 0
+
     # measure the height and width of the maze
     height = maze.shape[0]
     width = maze.shape[1]
@@ -269,7 +308,7 @@ def DFS(maze):
         if maze[height - 1][i] == 0:
             end = (height - 1, i)
     
-#    create a stack to store the nodes to be visited
+    # create a stack to store the nodes to be visited
     stack = []
     # add the start node to the stack
     stack.append(start)
@@ -304,7 +343,6 @@ def DFS(maze):
                 if neighbor == end:
                     # break out of the loop
                     break
-                    
 
         # create a copy of the maze
         mazeCopy = maze.copy()
@@ -319,14 +357,23 @@ def DFS(maze):
         displayMaze(mazeCopy, False)
         plt.savefig("DFS/" + str(len(visited)) + ".png")
         plt.close()
-    
+
     path = []
     path.append(end)
     while end in parent:
+        # stepCount += 1
         end = parent[end]
         path.append(end)
     path.reverse()
     path.pop(0)
+
+    # measure the time it takes to run DFS
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    dfsTime.append(elapsed_time)
+    stepCount = len(visited)
+    dfsSteps.append(stepCount)
+    print(f"Elapsed time for Depth-First Search: {elapsed_time} \| Steps: {stepCount}")
     
     mazeCopy = maze.copy()
     currentNumFiles = len(os.listdir("DFS"))
@@ -339,4 +386,91 @@ def DFS(maze):
 
     createMP4("DFS", "DFS")
 
-DFS(newMaze)
+# DFS(newMaze, dfsTime, dfsSteps)
+
+
+# In[8]:
+
+
+
+
+for i in range(5):
+  currMaze = generateMaze()
+  BFS(currMaze, bfsTime, bfsSteps)
+  DFS(currMaze, dfsTime, dfsSteps)
+
+
+# In[9]:
+
+
+print("DFS Times:", dfsTime)
+print("BFS Times:", bfsTime)
+
+# X-axis labels
+labels = ['Maze 1', 'Maze 2', 'Maze 3', 'Maze 4', 'Maze 5']
+
+# Set the width of each bar
+barWidth = 0.35
+
+# Set the position of each bar on the X-axis
+r1 = np.arange(len(bfsTime))
+r2 = [x + barWidth for x in r1]
+
+# Define consistent colors for each search
+bfsColor = ['#3366CC', '#3366CC', '#3366CC', '#3366CC', '#3366CC']
+dfsColor = ['#109618', '#109618', '#109618', '#109618', '#109618']
+
+# Plotting the bar graph
+plt.bar(r1, bfsTime, color=bfsColor, width=barWidth, edgecolor='white', label='BFS')
+plt.bar(r2, dfsTime, color=dfsColor, width=barWidth, edgecolor='white', label='DFS')
+
+# Adding labels and title
+plt.xlabel('Search Algorithm')
+plt.ylabel('Time (in seconds)')
+plt.title(f'BFS vs DFS Time Comparison ({heightSize}x{widthSize} maze)')
+
+# Adding X-axis labels
+plt.xticks([r + barWidth/2 for r in range(len(bfsTime))], labels)
+
+# Adding legend
+plt.legend()
+
+# Displaying the plot
+plt.show()
+
+
+# In[10]:
+
+
+# X-axis labels
+labels = ['Maze 1', 'Maze 2', 'Maze 3', 'Maze 4', 'Maze 5']
+
+# Set the width of each bar
+barWidth = 0.35
+
+# Set the position of each bar on the X-axis
+r1 = np.arange(len(bfsSteps))
+r2 = [x + barWidth for x in r1]
+
+# Define consistent colors for each search
+bfsColor = ['#3366CC', '#3366CC', '#3366CC', '#3366CC', '#3366CC']
+dfsColor = ['#109618', '#109618', '#109618', '#109618', '#109618']
+
+# Plotting the bar graph
+plt.bar(r1, bfsSteps, color=bfsColor, width=barWidth, edgecolor='white', label='BFS')
+plt.bar(r2, dfsSteps, color=dfsColor, width=barWidth, edgecolor='white', label='DFS')
+
+# Adding labels and title
+plt.xlabel('Search Algorithm')
+plt.ylabel('Steps Taken')
+plt.title(f'BFS vs DFS Step Comparison ({heightSize}x{widthSize} maze)')
+
+# Adding X-axis labels
+plt.xticks([r + barWidth/2 for r in range(len(bfsSteps))], labels)
+
+# Adding legend
+plt.legend()
+
+# Displaying the plot
+plt.show()
+
