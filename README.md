@@ -1,7 +1,6 @@
 # BFS & DFS Maze Search
 
-> CECS 451 Section 1
-> Group 5:
+> CECS 451 Section 1 - Group 5:
 >
 > - Nicole Cerda ([@NikkiC02](https://github.com/NikkiC02))
 > - Aldo Dagio-Ortega ([@Aldo Dagio](https://github.com/aldodagio))
@@ -33,3 +32,10 @@ You may choose to run this project one of two ways:
 4. Create a virtual environment: `python3.<version> -m venv env` (replace `<version>` with your local Python3 version)
 5. Active the virtual environment `source env/bin/activate`
 6. Run the `general.ipynb` cells in order.
+
+## Dependencies
+
+- [Mazelib](https://github.com/john-science/mazelib​)
+- [Numpy](https://numpy.org/​)
+- [Matplotlib](https://matplotlib.org/​)
+- [Imageio](https://imageio.readthedocs.io/en/stable/)
